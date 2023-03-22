@@ -1,50 +1,53 @@
 // const axios = require('axios/dist/node/axios.cjs');
 import Notiflix from 'notiflix';
-
-// Notiflix.Notify.success('Sol lucet omnibus');
-
-// Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-
-// Notiflix.Notify.warning('Memento te hominem esse');
-
-// Notiflix.Notify.info('Cogito ergo sum');
+import { fetchImages } from './js/fetch-images';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
-    form: document.querySelector('.search-form'),
-    input: document.querySelector('.search-form_input'),
-    submitBtn: document.querySelector('.search-form_btn'),
-    gallery: document.querySelector('.gallery'),
-    loadBtn: document.querySelector('.load-more')
-}
+  form: document.querySelector('.search-form'),
+  input: document.querySelector('.form-input'),
+  submitBtn: document.querySelector('.search-btn'),
+  gallery: document.querySelector('.gallery'),
+  loadBtn: document.querySelector('.load-more'),
+};
 
 refs.submitBtn.addEventListener('click', handleSubmitBtn);
+refs.loadBtn.addEventListener('click', handleLoadMoreBtn);
 
 let pageNumber = 1;
+let uploadedHits = 0;
 
 function handleSubmitBtn(event) {
-    event.preventDefault();
-    const searchItem = refs.input.value;
+  refs.gallery.innerHTML = '';
+  uploadedHits = 0;
+  pageNumber = 1;
+  event.preventDefault();
+  const searchItem = refs.input.value;
 
-    fetch(`https://pixabay.com/api/?key=34628461-4bda2ae404146a46c3fd3a186&q=${searchItem}&image_type=photo&orientation=horizontal&safesearch=true&page=${pageNumber}&per_page=40`).then(r => {
-        if (!r.ok) {
-            throw new Error(r.status);
-        }
-        return r.json();
-    }).then(onFetchSuccess).catch(onFetchError);
-
-    pageNumber += 1;
+  fetchImages(searchItem, pageNumber).then(onFetchSuccess).catch(onFetchError);
 }
 
-function onFetchSuccess(r) { 
-    refs.gallery.innerHTML = '';
+function handleLoadMoreBtn() {
+  const searchItem = refs.input.value;
+  fetchImages(searchItem, pageNumber).then(onFetchSuccess).catch(onFetchError);
+}
 
-    if (r.total == 0) {
-        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-    }
+function onFetchSuccess(r) {
+  if (pageNumber === 1 && r.totalHits > 0) {
+    Notiflix.Notify.info(`Hooray! We found ${r.totalHits} images.`);
+  }
+  pageNumber += 1;
+  if (r.total == 0) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
 
-    r.hits.map(el => {
-        const markup =
-            `<div class="photo-card">
+  r.hits.map(el => {
+    const markup = `
+         <a href="${el.largeImageURL}">
+            <div class="photo-card">
                <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
                <div class="info">
                   <p class="info-item"><b>Likes</b>${el.likes}</p>
@@ -52,13 +55,29 @@ function onFetchSuccess(r) {
                   <p class="info-item"><b>Comments</b>${el.comments}</p>
                   <p class="info-item"><b>Downloads</b>${el.downloads}</p>
                </div>
-            </div>`;
-        
-        refs.gallery.insertAdjacentHTML('beforeend', markup);
-    })
+            </div>
+         </a>`;
 
+    refs.gallery.insertAdjacentHTML('beforeend', markup);
+
+    refs.loadBtn.classList.remove('is-hidden');
+    uploadedHits += 1;
+  });
+
+  let modalLightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+  });
+
+  refs.gallery.refresh();
+
+  if (r.totalHits === uploadedHits && r.totalHits > 0) {
+    refs.loadBtn.classList.add('is-hidden');
+    Notiflix.Notify.info(
+      `We're sorry, but you've reached the end of search results.`
+    );
+  }
 }
 
 function onFetchError(error) {
-    console.log(error)
+  console.log(error);
 }
