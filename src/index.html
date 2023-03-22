@@ -8,7 +8,17 @@
     <script type="module" src="./index.js"></script>
   </head>
   <body>
+    <form class="search-form" id="search-form">
+      <div class="search-form_wrapper">
+        <input class="search-form_input" type="text" name="searchQuery" autocomplete="off" placeholder="Search images..." />
+        <button class="search-form_btn" type="submit">Search</button>
+      </div >
+    </form>
+    <div class="gallery">
+      <!-- Картки зображень -->
+      <button type="button" class="load-more">Load more</button>
+    </div>
     <!-- ❗️❗️❗️ Add partials like so for every page -->
-    <include src="./partials/example.html"></include>
+    <!-- <include src="./partials/example.html"></include> -->
   </body>
 </html>
