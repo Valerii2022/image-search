@@ -1,10 +1,10 @@
 // const axios = require('axios/dist/node/axios.cjs');
+const axios = require('axios').default;
 // import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
 import { fetchImages } from './js/fetch-images';
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
-
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -67,11 +67,10 @@ function onFetchSuccess(r) {
     uploadedHits += 1;
   });
 
-  // let modalLightbox = new SimpleLightbox('.gallery a', {
-  //   captionDelay: 250,
-  // });
-
-  // refs.gallery.refresh();
+  let modalLightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+  });
+  modalLightbox.refresh();
 
   if (r.totalHits === uploadedHits && r.totalHits > 0) {
     refs.loadBtn.classList.add('is-hidden');
