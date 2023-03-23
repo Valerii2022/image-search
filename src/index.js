@@ -1,8 +1,10 @@
 // const axios = require('axios/dist/node/axios.cjs');
+// import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
 import { fetchImages } from './js/fetch-images';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
+// import SimpleLightbox from 'simplelightbox';
+// import 'simplelightbox/dist/simple-lightbox.min.css';
+
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -38,7 +40,7 @@ function onFetchSuccess(r) {
     Notiflix.Notify.info(`Hooray! We found ${r.totalHits} images.`);
   }
   pageNumber += 1;
-  if (r.total == 0) {
+  if (r.total === 0) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -59,16 +61,17 @@ function onFetchSuccess(r) {
          </a>`;
 
     refs.gallery.insertAdjacentHTML('beforeend', markup);
+    // refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(el));
 
     refs.loadBtn.classList.remove('is-hidden');
     uploadedHits += 1;
   });
 
-  let modalLightbox = new SimpleLightbox('.gallery a', {
-    captionDelay: 250,
-  });
+  // let modalLightbox = new SimpleLightbox('.gallery a', {
+  //   captionDelay: 250,
+  // });
 
-  refs.gallery.refresh();
+  // refs.gallery.refresh();
 
   if (r.totalHits === uploadedHits && r.totalHits > 0) {
     refs.loadBtn.classList.add('is-hidden');

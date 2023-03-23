@@ -27,6 +27,9 @@
 }
 
 .gallery a {
+   color: #000000;
+   text-decoration: none;
+   width: calc((100% - 50px) / 6);
 }
 
 // .load-more {
@@ -44,7 +47,9 @@
    border: 1px solid #8e8e8e;
    border-radius: 5px;
 
-   width: calc((100% - 50px) / 6);
+   
+
+   
 }
 
 .photo-card img {
@@ -61,6 +66,7 @@
    display: flex;
    flex-direction: column;
    align-items: center;
+   gap: 5px;
    padding: 5px;
    font-size: 12px;
 }
