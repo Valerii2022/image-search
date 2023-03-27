@@ -1,4 +1,3 @@
-// const axios = require('axios/dist/node/axios.cjs');
 const axios = require('axios').default;
 import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
@@ -14,14 +13,14 @@ const refs = {
   loadBtn: document.querySelector('.load-more'),
 };
 
-refs.submitBtn.addEventListener('click', handleSubmitBtn);
+refs.form.addEventListener('submit', handleSubmitForm);
 refs.loadBtn.addEventListener('click', handleLoadMoreBtn);
 
 let pageNumber = 1;
 let uploadedHits = 0;
 let modalLightbox;
 
-function handleSubmitBtn(event) {
+function handleSubmitForm(event) {
   refs.gallery.innerHTML = '';
   uploadedHits = 0;
   pageNumber = 1;
@@ -38,25 +37,27 @@ function handleLoadMoreBtn() {
   fetchImages(searchItem, pageNumber).then(onFetchSuccess).catch(onFetchError);
 }
 
-function onFetchSuccess(response) {
-  if (pageNumber === 1 && response.totalHits > 0) {
-    Notiflix.Notify.info(`Hooray! We found ${response.totalHits} images.`);
-  }
-  pageNumber += 1;
-  if (response.total === 0) {
+function onFetchSuccess(data) {
+  if (data.total === 0 || refs.input.value === '') {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    return;
   }
 
-  renderGalleryCards(response);
+  if (pageNumber === 1 && data.totalHits > 0) {
+    Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
+  }
+  pageNumber += 1;
+
+  renderGalleryCards(data);
 
   modalLightbox = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
   });
   modalLightbox.refresh();
 
-  if (response.totalHits === uploadedHits && response.totalHits > 0) {
+  if (data.totalHits === uploadedHits && data.totalHits > 0) {
     refs.loadBtn.classList.add('is-hidden');
     Notiflix.Notify.info(
       `We're sorry, but you've reached the end of search results.`
@@ -68,25 +69,10 @@ function onFetchError(error) {
   console.log(error);
 }
 
-function renderGalleryCards(response) {
-  response.hits.map(el => {
-    // const markup = `
-    //      <a href="${el.largeImageURL}">
-    //         <div class="photo-card">
-    //            <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
-    //            <div class="info">
-    //               <p class="info-item"><b>Likes</b>${el.likes}</p>
-    //               <p class="info-item"><b>Views</b>${el.views}</p>
-    //               <p class="info-item"><b>Comments</b>${el.comments}</p>
-    //               <p class="info-item"><b>Downloads</b>${el.downloads}</p>
-    //            </div>
-    //         </div>
-    //      </a>`;
-
-    // refs.gallery.insertAdjacentHTML('beforeend', markup);
+function renderGalleryCards(data) {
+  data.hits.map(el => {
     refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(el));
 
-    // ==================================
     const { height: cardHeight } =
       refs.gallery.firstElementChild.getBoundingClientRect();
 
@@ -94,7 +80,6 @@ function renderGalleryCards(response) {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-    // ==================================
 
     refs.loadBtn.classList.remove('is-hidden');
     uploadedHits += 1;
