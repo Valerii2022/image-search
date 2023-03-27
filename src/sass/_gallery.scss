@@ -1,82 +1,82 @@
 .search-form {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   padding-top: 20px;
-   padding-bottom: 20px;
-   background-color: #0070ba;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #0070ba;
 }
 
 .form-input {
-   padding: 10px;
-   border-radius: 5px;
-   border: none;
+  padding: 10px;
+  border-radius: 5px 0 0 5px;
+  border: none;
 }
 
 .search-btn {
-   padding: 10px;
-   border-radius: 5px;
-   border: none;
+  padding: 10px;
+  border-radius: 0 5px 5px 0;
+  border: none;
 }
 
 .gallery {
-   display: flex;
-   flex-wrap: wrap;
-   gap: 10px;
-   padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
 }
 
 .gallery a {
-   color: #000000;
-   text-decoration: none;
-   width: calc((100% - 50px) / 6);
+  color: #000000;
+  text-decoration: none;
+  width: calc((100% - 50px) / 6);
 }
 
 // .load-more {
 // }
 
 .is-hidden {
-   opacity: 0;
-   visibility: hidden;
-   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .photo-card {
-   display: flex;
-   flex-direction: column;
-   border: 1px solid #8e8e8e;
-   justify-content: space-between;
-   border-radius: 5px;
-   overflow: hidden;
-   height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #8e8e8e;
+  justify-content: space-between;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 100%;
 }
 
 .photo-card img {
-   width: auto;
-   height: 100%;
+  width: auto;
+  height: 100%;
 }
 
 .info {
-   display: flex;
-   justify-content: space-between;
-   flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .info-item {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   gap: 5px;
-   padding: 5px;
-   font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  font-size: 12px;
 }
 
 .load-more {
-   padding: 10px;
-   margin: 0 auto;
-   display: block;
-   background-color: #0070ba;
-   color: #fff;
-   border: none;
-   border-radius: 5px;
+  padding: 10px;
+  margin: 0 auto;
+  display: block;
+  background-color: #0070ba;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
 }

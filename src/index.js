@@ -1,6 +1,6 @@
 // const axios = require('axios/dist/node/axios.cjs');
 const axios = require('axios').default;
-// import imageCardTemplate from './templates/gallery.hbs';
+import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
 import { fetchImages } from './js/fetch-images';
 import SimpleLightbox from 'simplelightbox';
@@ -70,21 +70,21 @@ function onFetchError(error) {
 
 function renderGalleryCards(response) {
   response.hits.map(el => {
-    const markup = `
-         <a href="${el.largeImageURL}">
-            <div class="photo-card">
-               <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
-               <div class="info">
-                  <p class="info-item"><b>Likes</b>${el.likes}</p>
-                  <p class="info-item"><b>Views</b>${el.views}</p>
-                  <p class="info-item"><b>Comments</b>${el.comments}</p>
-                  <p class="info-item"><b>Downloads</b>${el.downloads}</p>
-               </div>
-            </div>
-         </a>`;
+    // const markup = `
+    //      <a href="${el.largeImageURL}">
+    //         <div class="photo-card">
+    //            <img src="${el.webformatURL}" alt="${el.tags}" loading="lazy" />
+    //            <div class="info">
+    //               <p class="info-item"><b>Likes</b>${el.likes}</p>
+    //               <p class="info-item"><b>Views</b>${el.views}</p>
+    //               <p class="info-item"><b>Comments</b>${el.comments}</p>
+    //               <p class="info-item"><b>Downloads</b>${el.downloads}</p>
+    //            </div>
+    //         </div>
+    //      </a>`;
 
-    refs.gallery.insertAdjacentHTML('beforeend', markup);
-    // refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(el));
+    // refs.gallery.insertAdjacentHTML('beforeend', markup);
+    refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(el));
 
     // ==================================
     const { height: cardHeight } =
