@@ -1,4 +1,4 @@
-<a href="{{this.largeImageURL}}">
+{{!-- <a href="{{this.largeImageURL}}">
     <div class="photo-card">
         <img src="{{this.webformatURL}}" alt="{{this.tags}}" loading="lazy" />
         <div class="info">
@@ -8,4 +8,19 @@
             <p class="info-item"><b>Downloads</b>{{this.downloads}}</p>
         </div>
     </div>
+</a> --}}
+
+
+{{#each this}}
+<a href="{{this.largeImageURL}}">
+   <div class="photo-card">
+      <img src="{{this.webformatURL}}" alt="{{this.tags}}" loading="lazy" />
+      <div class="info">
+         <p class="info-item"><b>Likes</b>{{this.likes}}</p>
+         <p class="info-item"><b>Views</b>{{this.views}}</p>
+         <p class="info-item"><b>Comments</b>{{this.comments}}</p>
+         <p class="info-item"><b>Downloads</b>{{this.downloads}}</p>
+      </div>
+   </div>
 </a>
+{{/each}}

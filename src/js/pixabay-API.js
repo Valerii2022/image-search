@@ -14,18 +14,21 @@ export class PixabayAPI {
     safesearch: true,
   };
 
-  fetchPhotos() {
+  async fetchPhotos() {
     const searchParams = new URLSearchParams({
       q: this.query,
       page: this.page,
       ...this.baseSearchParams,
     });
 
-    return fetch(`${this.#BASE_API}?${searchParams}`).then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    });
+    const response = await fetch(`${this.#BASE_API}?${searchParams}`);
+    return await response.json();
+
+    //  return fetch(`${this.#BASE_API}?${searchParams}`).then(response => {
+    //!    if (!response.ok) {
+    //!      throw new Error(response.status);
+    //!    }
+    //    return response.json();
+    //  });
   }
 }

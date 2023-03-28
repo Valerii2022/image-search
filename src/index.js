@@ -1,9 +1,11 @@
-const axios = require('axios').default;
 import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
 import { PixabayAPI } from './js/pixabay-API';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+
+const axios = require('axios').default;
+const pixabayApi = new PixabayAPI();
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -16,32 +18,43 @@ const refs = {
 refs.form.addEventListener('submit', handleSubmitForm);
 refs.loadBtn.addEventListener('click', handleLoadMoreBtn);
 
-const pixabayApi = new PixabayAPI();
-
 let uploadedHits = 0;
 let modalLightbox;
 
-function handleSubmitForm(event) {
+async function handleSubmitForm(event) {
+  event.preventDefault();
   refs.gallery.innerHTML = '';
   uploadedHits = 0;
-  event.preventDefault();
+  pixabayApi.page = 1;
   pixabayApi.query = refs.input.value;
 
-  pixabayApi.fetchPhotos().then(onFetchSuccess).catch(onFetchError);
+  try {
+    const data = await pixabayApi.fetchPhotos();
+    onFetchSuccess(data);
+  } catch (error) {
+    onFetchError;
+  }
+
+  refs.input.value = '';
 }
 
-function handleLoadMoreBtn() {
+async function handleLoadMoreBtn() {
   modalLightbox.destroy();
 
-  pixabayApi.query = refs.input.value;
-  pixabayApi.fetchPhotos().then(onFetchSuccess).catch(onFetchError);
+  try {
+    const data = await pixabayApi.fetchPhotos();
+    onFetchSuccess(data);
+  } catch (error) {
+    onFetchError;
+  }
 }
 
 function onFetchSuccess(data) {
-  if (data.total === 0 || refs.input.value === '') {
+  if (data.total === 0 || pixabayApi.query === '') {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
+    refs.loadBtn.classList.add('is-hidden');
     return;
   }
 
@@ -70,18 +83,17 @@ function onFetchError(error) {
 }
 
 function renderGalleryCards(data) {
-  data.hits.map(el => {
-    refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(el));
+  refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(data.hits));
 
-    const { height: cardHeight } =
-      refs.gallery.firstElementChild.getBoundingClientRect();
+  //!   ------------------------------
+  const { height: cardHeight } =
+    refs.gallery.firstElementChild.getBoundingClientRect();
 
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: 'smooth',
-    });
-
-    refs.loadBtn.classList.remove('is-hidden');
-    uploadedHits += 1;
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
   });
+  //!   ------------------------------
+  uploadedHits += data.hits.length;
+  refs.loadBtn.classList.remove('is-hidden');
 }
