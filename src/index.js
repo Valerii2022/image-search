@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 import imageCardTemplate from './templates/gallery.hbs';
 import Notiflix from 'notiflix';
-import { fetchImages } from './js/fetch-images';
+import { PixabayAPI } from './js/pixabay-API';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -16,25 +16,25 @@ const refs = {
 refs.form.addEventListener('submit', handleSubmitForm);
 refs.loadBtn.addEventListener('click', handleLoadMoreBtn);
 
-let pageNumber = 1;
+const pixabayApi = new PixabayAPI();
+
 let uploadedHits = 0;
 let modalLightbox;
 
 function handleSubmitForm(event) {
   refs.gallery.innerHTML = '';
   uploadedHits = 0;
-  pageNumber = 1;
   event.preventDefault();
-  const searchItem = refs.input.value;
+  pixabayApi.query = refs.input.value;
 
-  fetchImages(searchItem, pageNumber).then(onFetchSuccess).catch(onFetchError);
+  pixabayApi.fetchPhotos().then(onFetchSuccess).catch(onFetchError);
 }
 
 function handleLoadMoreBtn() {
   modalLightbox.destroy();
 
-  const searchItem = refs.input.value;
-  fetchImages(searchItem, pageNumber).then(onFetchSuccess).catch(onFetchError);
+  pixabayApi.query = refs.input.value;
+  pixabayApi.fetchPhotos().then(onFetchSuccess).catch(onFetchError);
 }
 
 function onFetchSuccess(data) {
@@ -45,10 +45,10 @@ function onFetchSuccess(data) {
     return;
   }
 
-  if (pageNumber === 1 && data.totalHits > 0) {
+  if (pixabayApi.page === 1 && data.totalHits > 0) {
     Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
   }
-  pageNumber += 1;
+  pixabayApi.page += 1;
 
   renderGalleryCards(data);
 
