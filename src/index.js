@@ -48,7 +48,7 @@ async function handleLoadMoreBtn() {
   }
 }
 
-function onFetchSuccess(data) {
+function onFetchSuccess({ data }) {
   if (data.total === 0 || pixabayApi.query === '') {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
@@ -78,21 +78,20 @@ function onFetchSuccess(data) {
 }
 
 function onFetchError(error) {
-  console.log(error);
+  console.warn(error);
 }
 
 function renderGalleryCards(data) {
   refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(data.hits));
 
-  //!   ------------------------------
-  const { height: cardHeight } =
-    refs.gallery.firstElementChild.getBoundingClientRect();
+  //   const { height: cardHeight } =
+  //     refs.gallery.firstElementChild.getBoundingClientRect();
 
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-  //!   ------------------------------
+  //   window.scrollBy({
+  //     top: cardHeight * 2,
+  //     behavior: 'smooth',
+  //   });
+
   uploadedHits += data.hits.length;
   refs.loadBtn.classList.remove('is-hidden');
 }
