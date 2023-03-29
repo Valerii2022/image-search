@@ -1,3 +1,5 @@
+const axios = require('axios').default;
+
 export class PixabayAPI {
   #API_KEY = '34628461-4bda2ae404146a46c3fd3a186';
   #BASE_API = 'https://pixabay.com/api/';
