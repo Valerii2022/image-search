@@ -23,6 +23,12 @@ let modalLightbox;
 async function handleSubmitForm(event) {
   event.preventDefault();
   refs.gallery.innerHTML = '';
+  if (refs.input.value === '') {
+    Notiflix.Notify.failure(
+      'Sorry, your search query is empty. Please try again.'
+    );
+    return;
+  }
   uploadedHits = 0;
   pixabayApi.page = 1;
   pixabayApi.query = refs.input.value;
