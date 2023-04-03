@@ -1,6 +1,6 @@
-import imageCardTemplate from './templates/gallery.hbs';
+import imageCardTemplate from '../templates/gallery.hbs';
 import Notiflix from 'notiflix';
-import { PixabayAPI } from './js/pixabay-API';
+import { PixabayAPI } from './pixabay-API';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -11,14 +11,13 @@ const refs = {
   input: document.querySelector('.form-input'),
   submitBtn: document.querySelector('.search-btn'),
   gallery: document.querySelector('.gallery'),
-  loadBtn: document.querySelector('.load-more'),
+  sentinel: document.querySelector('.sentinel'),
 };
 
 refs.form.addEventListener('submit', handleSubmitForm);
-refs.loadBtn.addEventListener('click', handleLoadMoreBtn);
 
 let uploadedHits = 0;
-let modalLightbox;
+// let modalLightbox;
 
 async function handleSubmitForm(event) {
   event.preventDefault();
@@ -44,8 +43,8 @@ async function handleSubmitForm(event) {
   refs.input.value = '';
 }
 
-async function handleLoadMoreBtn() {
-  modalLightbox.destroy();
+async function loadMoreCards() {
+  //   modalLightbox.destroy();
 
   try {
     const { data } = await pixabayApi.fetchPhotos();
@@ -53,14 +52,6 @@ async function handleLoadMoreBtn() {
   } catch (error) {
     onFetchError;
   }
-
-  const { height: cardHeight } =
-    refs.gallery.firstElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 1.8,
-    behavior: 'smooth',
-  });
 }
 
 function onFetchSuccess(data) {
@@ -68,7 +59,6 @@ function onFetchSuccess(data) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
-    refs.loadBtn.classList.add('is-hidden');
     return;
   }
 
@@ -79,25 +69,10 @@ function onFetchSuccess(data) {
 
   renderGalleryCards(data);
 
-  modalLightbox = new SimpleLightbox('.gallery a', {
-    captionDelay: 250,
-  });
-  modalLightbox.refresh();
-
-  if (uploadedHits >= 500) {
-    refs.loadBtn.classList.add('is-hidden');
-    Notiflix.Notify.info(
-      `We're sorry, but you've reached the end of search results.`
-    );
-    return;
-  }
-
-  if (data.totalHits === uploadedHits && data.totalHits > 0) {
-    refs.loadBtn.classList.add('is-hidden');
-    Notiflix.Notify.info(
-      `We're sorry, but you've reached the end of search results.`
-    );
-  }
+  //   modalLightbox = new SimpleLightbox('.gallery a', {
+  //     captionDelay: 250,
+  //   });
+  //   modalLightbox.refresh();
 }
 
 function onFetchError(error) {
@@ -110,3 +85,20 @@ function renderGalleryCards(data) {
   uploadedHits += data.hits.length;
   refs.loadBtn.classList.remove('is-hidden');
 }
+
+const intersectionObserve = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && pixabayApi.query !== '') {
+      console.log(entry);
+      console.log(uploadedHits);
+      loadMoreCards();
+      pixabayApi.page += 1;
+    }
+  });
+};
+
+const observer = new IntersectionObserver(intersectionObserve, {
+  rootMargin: '150px',
+});
+
+observer.observe(refs.sentinel);
