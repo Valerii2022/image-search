@@ -34,7 +34,7 @@ async function handleSubmitForm(event) {
   pixabayApi.query = refs.input.value;
 
   try {
-    const data = await pixabayApi.fetchPhotos();
+    const { data } = await pixabayApi.fetchPhotos();
     onFetchSuccess(data);
   } catch (error) {
     onFetchError;
@@ -47,14 +47,14 @@ async function handleLoadMoreBtn() {
   modalLightbox.destroy();
 
   try {
-    const data = await pixabayApi.fetchPhotos();
+    const { data } = await pixabayApi.fetchPhotos();
     onFetchSuccess(data);
   } catch (error) {
     onFetchError;
   }
 }
 
-function onFetchSuccess({ data }) {
+function onFetchSuccess(data) {
   if (data.total === 0 || pixabayApi.query === '') {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
@@ -90,13 +90,13 @@ function onFetchError(error) {
 function renderGalleryCards(data) {
   refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(data.hits));
 
-  //   const { height: cardHeight } =
-  //     refs.gallery.firstElementChild.getBoundingClientRect();
+  const { height: cardHeight } =
+    refs.gallery.firstElementChild.getBoundingClientRect();
 
-  //   window.scrollBy({
-  //     top: cardHeight * 2,
-  //     behavior: 'smooth',
-  //   });
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 
   uploadedHits += data.hits.length;
   refs.loadBtn.classList.remove('is-hidden');

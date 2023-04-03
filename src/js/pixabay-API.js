@@ -17,12 +17,16 @@ export class PixabayAPI {
   };
 
   async fetchPhotos() {
-    return await axios.get(`${this.#BASE_API}`, {
-      params: {
-        q: this.query,
-        page: this.page,
-        ...this.baseSearchParams,
-      },
-    });
+    try {
+      return await axios.get(`${this.#BASE_API}`, {
+        params: {
+          q: this.query,
+          page: this.page,
+          ...this.baseSearchParams,
+        },
+      });
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
 }
