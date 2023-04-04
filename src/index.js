@@ -1,6 +1,8 @@
 import imageCardTemplate from './templates/gallery.hbs';
-import Notiflix from 'notiflix';
 import { PixabayAPI } from './js/pixabay-API';
+
+import Notiflix from 'notiflix';
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 

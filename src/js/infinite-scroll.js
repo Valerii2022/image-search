@@ -1,6 +1,8 @@
 import imageCardTemplate from '../templates/gallery.hbs';
-import Notiflix from 'notiflix';
 import { PixabayAPI } from './pixabay-API';
+
+import Notiflix from 'notiflix';
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -17,7 +19,8 @@ const refs = {
 refs.form.addEventListener('submit', handleSubmitForm);
 
 let uploadedHits = 0;
-// let modalLightbox;
+let modalLightbox;
+let totalCards = 0;
 
 async function handleSubmitForm(event) {
   event.preventDefault();
@@ -39,12 +42,11 @@ async function handleSubmitForm(event) {
   } catch (error) {
     onFetchError;
   }
-
   refs.input.value = '';
 }
 
 async function loadMoreCards() {
-  //   modalLightbox.destroy();
+  modalLightbox.destroy();
 
   try {
     const { data } = await pixabayApi.fetchPhotos();
@@ -64,15 +66,23 @@ function onFetchSuccess(data) {
 
   if (pixabayApi.page === 1 && data.totalHits > 0) {
     Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
+    totalCards = data.totalHits;
   }
   pixabayApi.page += 1;
 
   renderGalleryCards(data);
 
-  //   modalLightbox = new SimpleLightbox('.gallery a', {
-  //     captionDelay: 250,
-  //   });
-  //   modalLightbox.refresh();
+  modalLightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+  });
+  modalLightbox.refresh();
+
+  if (uploadedHits >= 500) {
+    Notiflix.Notify.info(
+      `We're sorry, but you've reached the end of search results.`
+    );
+    return;
+  }
 }
 
 function onFetchError(error) {
@@ -83,22 +93,22 @@ function renderGalleryCards(data) {
   refs.gallery.insertAdjacentHTML('beforeend', imageCardTemplate(data.hits));
 
   uploadedHits += data.hits.length;
-  refs.loadBtn.classList.remove('is-hidden');
 }
 
 const intersectionObserve = entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting && pixabayApi.query !== '') {
-      console.log(entry);
-      console.log(uploadedHits);
+    if (
+      entry.isIntersecting &&
+      pixabayApi.query !== '' &&
+      uploadedHits < totalCards
+    ) {
       loadMoreCards();
-      pixabayApi.page += 1;
     }
   });
 };
 
 const observer = new IntersectionObserver(intersectionObserve, {
-  rootMargin: '150px',
+  rootMargin: '200px',
 });
 
 observer.observe(refs.sentinel);
