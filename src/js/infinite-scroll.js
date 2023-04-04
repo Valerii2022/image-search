@@ -23,8 +23,11 @@ let modalLightbox;
 let totalCards = 0;
 
 async function handleSubmitForm(event) {
+  observer.disconnect(refs.sentinel);
   event.preventDefault();
+  pixabayApi.page = 1;
   refs.gallery.innerHTML = '';
+
   if (refs.input.value.trim() === '') {
     Notiflix.Notify.failure(
       'Sorry, your search query is empty. Please try again.'
@@ -32,8 +35,9 @@ async function handleSubmitForm(event) {
     refs.input.value = '';
     return;
   }
+
   uploadedHits = 0;
-  pixabayApi.page = 1;
+
   pixabayApi.query = refs.input.value.trim();
 
   try {
@@ -42,7 +46,9 @@ async function handleSubmitForm(event) {
   } catch (error) {
     onFetchError;
   }
+
   refs.input.value = '';
+  observer.observe(refs.sentinel);
 }
 
 async function loadMoreCards() {
@@ -68,6 +74,7 @@ function onFetchSuccess(data) {
     Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
     totalCards = data.totalHits;
   }
+
   pixabayApi.page += 1;
 
   renderGalleryCards(data);
