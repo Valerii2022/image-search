@@ -1,18 +1,26 @@
 .main-list {
   list-style: none;
+  display: flex;
+  gap: 20px;
 }
 
 .main-list .link {
+  border: 2px solid #1d9999;
+  border-radius: 5px;
+  padding: 5px 10px;
   text-transform: uppercase;
+  text-decoration: none;
   font-size: 18px;
   font-weight: bold;
   text-decoration: nones;
-  color: #000000;
-  transition: color 250ms linear;
+  background-color: #fff;
+  color: #1d9999;
+  transition: color 250ms linear, background-color 250ms linear;
 }
 
 .main-list .link:hover {
-  color: teal;
+  color: #fff;
+  background-color: #1d9999;
 }
 
 .search-form {
